@@ -1,0 +1,41 @@
+{
+  "name": "quark",
+  "version": "1.0.0",
+  "description": "a front-end view library.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx rollup -w -c ./scripts/rollup.config.lib.js",
+    "play": "npx rollup -w -c ./scripts/rollup.config.play.js",
+    "build": "npx rollup -c ./scripts/rollup.config.lib.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShenQingchuan/Quark.git"
+  },
+  "keywords": [
+    "front-end",
+    "quark"
+  ],
+  "author": "ShenQingchuan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShenQingchuan/Quark/issues"
+  },
+  "homepage": "https://github.com/ShenQingchuan/Quark#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-react-jsx": "^7.12.12",
+    "@rollup/plugin-babel": "^5.2.2",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/lodash": "^4.14.167",
+    "rollup": "^2.36.1",
+    "rollup-plugin-serve": "^1.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.29.0",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.20"
+  }
+}

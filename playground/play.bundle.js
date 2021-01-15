@@ -1,0 +1,1 @@
+!function(){"use strict";let l=Quark.createElement("div",null,Quark.createElement("p",null,"Hello Quark App!"),Quark.createElement("ul",null,Quark.createElement("li",null,"Task 1"),Quark.createElement("li",null,"Task 2")));console.log(JSON.stringify(l,null,2))}();
