@@ -2,11 +2,10 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import serve from "rollup-plugin-serve";
 import babel from '@rollup/plugin-babel';
-import { terser } from 'rollup-plugin-terser';
 import livereload from 'rollup-plugin-livereload';
 
 export default {
-  input: "./playground/play.js",
+  input: "./playground/play.jsx",
   output: {
     file: "./playground/bundle/play.bundle.js",
     format: 'iife'
@@ -28,7 +27,6 @@ export default {
         ],
       ],
     }),
-    terser(),
     serve({
       open: 'index.html',
       verbose: false,
@@ -40,7 +38,9 @@ export default {
           `Server listening at http://${this.host}:${this.port}/`);
       },
     }),
-    livereload()
+    livereload({
+      watch: 'playground'
+    })
   ],
 };
 

@@ -1,0 +1,23 @@
+#app {
+  margin-top: 20px;
+  display: flex;
+}
+
+pre, code {
+  font-family: 'Fira Code', 'Menlo';
+}
+
+pre {
+  margin: 0 20px;
+}
+pre span.title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+code {
+  width: fit-content;
+  border-radius: 16px;
+  box-shadow: 0 5px 10px #8e8e8d;
+  font-size: 16px;
+}

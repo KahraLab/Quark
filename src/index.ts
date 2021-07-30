@@ -1,4 +1,4 @@
-import { Attributes, FC, QuarkElement, QuarkNode } from "./typings";
+import type { Attributes, FC, FragmentProps, QuarkElement, QuarkNode } from "./typings";
 
 export function createElement<P extends Attributes = {}>(
   type: keyof HTMLElementTagNameMap | FC,
@@ -23,4 +23,7 @@ export function createTextElement(text: QuarkNode): QuarkElement {
       children: [],
     },
   };
+}
+export function Fragment(props: FragmentProps) {
+  return props.children;
 }

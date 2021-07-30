@@ -4,11 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quark Playground</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/atom-one-dark.min.css"
+      integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <pre class="app-output-json" lang="application/json">
+        <span class="title">App: </span>
+        <code id="jsx1" class="language-json"></code>
+      </pre>
+      <pre class="app-output-json" lang="application/json">
+        <span class="title">jsxSample: </span>
+        <code id="jsx2" class="language-json"></code>
+      </pre>
+    </div>
   </body>
 
-  <script src="/quark.global.js"></script>
+  <script src="/bundle/quark.global.js"></script>
   <script src="/bundle/play.bundle.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"
+    integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    hljs.highlightAll();
+  </script>
 </html>

@@ -12,6 +12,9 @@ export interface Attributes {
   ref?: Ref;
   children?: QuarkNode[];
 }
+export interface FragmentProps {
+  children: QuarkNode[];
+}
 export interface QuarkElement<P extends Attributes = any> {
   type: string | FC;
   props: P;
@@ -24,8 +27,9 @@ export type QuarkNode =
   | undefined
   | QuarkElement
   | QuarkNode[];
-export interface FunctionComponent<P extends Attributes = any> {
+
+// FunctionComponent
+export interface FC<P extends Attributes = any> {
   (props: P): QuarkElement<P> | null;
   // more properties...
 }
-export type FC = FunctionComponent;

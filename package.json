@@ -4,9 +4,9 @@
   "description": "a front-end view library.",
   "main": "index.js",
   "scripts": {
-    "dev": "npx rollup -w -c ./scripts/rollup.config.lib.js",
+    "dev": "npx rollup -w -c ./scripts/rollup.config.dev.js",
     "play": "npx rollup -w -c ./scripts/rollup.config.play.js",
-    "build": "npx rollup -c ./scripts/rollup.config.lib.js"
+    "build": "npx rollup -c ./scripts/rollup.config.prod.js"
   },
   "repository": {
     "type": "git",
