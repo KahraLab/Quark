@@ -1,5 +1,7 @@
 import type { Attributes, FC, FragmentProps, QuarkElement, QuarkNode } from "./typings";
 
+export * from './reconcile';
+
 export function createElement<P extends Attributes = {}>(
   type: keyof HTMLElementTagNameMap | FC,
   props?: P,
