@@ -4,8 +4,9 @@
   "description": "an experimental front-end view library.",
   "main": "index.js",
   "scripts": {
-    "dev": "rollup -wc ./scripts/rollup.config.dev.js",
-    "play": "rollup -wc ./scripts/rollup.config.play.js",
+    "dev": "node ./dev-cli/main.js",
+    "idev": "rollup -wc ./scripts/rollup.config.dev.js",
+    "iplay": "rollup -wc ./scripts/rollup.config.play.js",
     "build": "rollup -c ./scripts/rollup.config.prod.js"
   },
   "repository": {

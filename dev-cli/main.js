@@ -10,9 +10,7 @@ const watchQuarkSrc = async () => {
     const watchSrcProcess = execa("rollup", [
       "-wc",
       path.resolve(__dirname, "../scripts/rollup.config.dev.js"),
-    ], {
-      stdio: 'inherit',
-    });
+    ]);
     await watchSrcProcess;
   } catch (error) {
     log.error(
@@ -22,4 +20,21 @@ const watchQuarkSrc = async () => {
   }
 };
 
+const watchPlayground = async () => {
+  log.info(infoMsgs.START_WATCHING_PLAYGROUND);
+  try {
+    const watchPlaygroundProcess = execa("rollup", [
+      "-wc",
+      path.resolve(__dirname, "../scripts/rollup.config.play.js"),
+    ]);
+    await watchPlaygroundProcess;
+  } catch (error) {
+    log.error(
+`${errMsgs.PLAYGROUND_WATCH_FAILED}
+  throws error: ${error}`
+    );
+  }
+}
+
 watchQuarkSrc();
+watchPlayground();

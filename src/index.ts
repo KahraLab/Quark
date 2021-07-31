@@ -22,7 +22,6 @@ export function createTextElement(text: QuarkNode): QuarkElement {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: text,
-      children: [],
     },
   };
 }
