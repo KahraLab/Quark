@@ -1,5 +1,3 @@
-import type { QuarkNode } from "./typings";
+import type { QuarkElement } from "./typings";
 
-export function render(vnode: QuarkNode, mountTarget: Node) {
-
-}
+export function render(vnode: QuarkElement, mountTarget: Node) {}

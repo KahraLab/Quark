@@ -10,23 +10,36 @@ export type Ref<T = unknown> = RefObject<T> | RefCallback<T> | null;
 export interface Attributes {
   key?: Key;
   ref?: Ref;
-  children?: QuarkNode[];
+  children?: ElementChild[];
 }
 export interface FragmentProps {
-  children: QuarkNode[];
+  children: ElementChild[];
 }
+export const QuarkElementTypeSymbol = Symbol.for('QuarkElement');
 export interface QuarkElement<P extends Attributes = any> {
+  $$typeof: typeof QuarkElementTypeSymbol;
   type: string | FC;
   props: P;
 }
-export type QuarkNode =
+export type ElementChild =
   | string
   | number
   | boolean
   | null
   | undefined
   | QuarkElement
-  | QuarkNode[];
+  | ElementChild[];
+
+export interface Fiber<P extends Attributes = any> {
+  type: string | FC<P>;
+  pendingProps: P;
+  ref: Ref;
+  lane: number;
+  key?: string;
+  silbling?: Fiber;
+  child?: Fiber;
+  returns: Fiber;
+}
 
 // FunctionComponent
 export interface FC<P extends Attributes = any> {
