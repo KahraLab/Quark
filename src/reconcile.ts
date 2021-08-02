@@ -1,19 +1,23 @@
 import type {
   Fiber,
   QuarkElement,
-  Container,
   RequestIdleCallbackDeadline,
-  PropsType,
+  ElementProps,
   NullableFiber,
 } from "./typings";
+import {
+  isEvent,
+  isProperty,
+  isNew,
+  isGone,
+} from './utils'
 
 let workInProgress: NullableFiber = null;
 let rootFiber: NullableFiber = null;
 let currentRoot: NullableFiber = null;
 let deletions: Fiber[];
 
-export function render(element: QuarkElement, container: Container) {
-  // @ts-ignore
+export function render(element: QuarkElement, container: Node) {
   rootFiber = {
     container,
     props: {
@@ -25,16 +29,10 @@ export function render(element: QuarkElement, container: Container) {
   workInProgress = rootFiber;
 }
 
-const isEvent = (key: string) => key.startsWith("on");
-const isProperty = (key: string) => key !== "children";
-const isNew = (prev: PropsType, next: PropsType) => (key: string) =>
-  prev[key] !== next[key];
-const isGone = (prev: PropsType, next: PropsType) => (key: string) =>
-  !(key in next);
 function updateDOM(
-  container: Container,
-  prevProps: PropsType,
-  nextProps: PropsType
+  container: Node,
+  prevProps: ElementProps,
+  nextProps: ElementProps
 ) {
   // Remove old properties
   Object.keys(prevProps)
@@ -72,6 +70,7 @@ function commitRoot() {
   currentRoot = rootFiber;
   rootFiber = null;
 }
+
 function commitWork(fiber?: Fiber) {
   if (!fiber) return;
   const domParent = fiber.returns.container;
@@ -86,21 +85,6 @@ function commitWork(fiber?: Fiber) {
   commitWork(fiber.child);
   commitWork(fiber.silbling);
 }
-
-function workLoop(deadline: RequestIdleCallbackDeadline) {
-  let shouldYield = false;
-  while (workInProgress && !shouldYield) {
-    workInProgress = performWork(workInProgress);
-    shouldYield = deadline.timeRemaining() < 1;
-  }
-
-  if (!workInProgress && rootFiber) {
-    commitRoot();
-  }
-
-  window.requestIdleCallback(workLoop);
-}
-window.requestIdleCallback(workLoop);
 
 function createDOM(fiber: Fiber) {
   const dom =
@@ -185,3 +169,19 @@ function reconcileChildren(wip: Fiber, elements: QuarkElement[]) {
     index++;
   }
 }
+
+function workLoop(deadline: RequestIdleCallbackDeadline) {
+  let shouldYield = false;
+  while (workInProgress && !shouldYield) {
+    workInProgress = performWork(workInProgress);
+    shouldYield = deadline.timeRemaining() < 1;
+  }
+
+  if (!workInProgress && rootFiber) {
+    commitRoot();
+  }
+
+  window.requestIdleCallback(workLoop);
+}
+
+window.requestIdleCallback(workLoop);

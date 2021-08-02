@@ -1,8 +1,11 @@
-import {
-  RequestIdleCallbackDeadline,
-  RequestIdleCallbackHandle,
-  RequestIdleCallbackOptions,
-} from "./index";
+export type RequestIdleCallbackHandle = any;
+export type RequestIdleCallbackOptions = {
+  timeout: number;
+};
+export type RequestIdleCallbackDeadline = {
+  readonly didTimeout: boolean;
+  timeRemaining: (() => number);
+};
 
 declare global {
   type NewType = RequestIdleCallbackHandle;
@@ -15,5 +18,3 @@ declare global {
     cancelIdleCallback: (handle: RequestIdleCallbackHandle) => void;
   }
 }
-
-export /** hack for "declare global" */ {};
