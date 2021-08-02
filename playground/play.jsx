@@ -5,12 +5,15 @@ const updateValue = e => {
 
 const rerender = value => {
   const element = (
-    <div>
+    <div className={{
+      'bg-gray': value === 'gray'
+    }} style={{ padding: '16px' }}>
       <input type="text" value={value} onInput={updateValue}/>
-      <h2>Hello {value}</h2>
+      <h3>输入内容查看下方动态变化：</h3>
+      <p className={['font-italic', 'margin-10']}>{value}</p>
     </div>
   );
   Quark.render(element, container);
 }
 
-rerender("world");
+rerender('Hello world');

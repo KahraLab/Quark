@@ -7,14 +7,17 @@ const { infoMsgs, warnMsgs, errMsgs } = require("./messages");
 const watchQuarkSrc = async () => {
   log.info(infoMsgs.START_WATCHING_SRC);
   try {
-    const watchSrcProcess = execa("rollup", [
-      "-wc",
-      path.resolve(__dirname, "../scripts/rollup.config.dev.js"),
-    ]);
+    const watchSrcProcess = execa(
+      "node",
+      [path.resolve(__dirname, "../scripts/rollup.config.dev.js"), "--color"],
+      {
+        stdio: "pipe",
+      }
+    ).stdout.pipe(process.stdout);
     await watchSrcProcess;
   } catch (error) {
     log.error(
-`${errMsgs.ROLLUP_WATCH_FAILED}
+      `${errMsgs.ROLLUP_WATCH_FAILED}
   throws error: ${error}`
     );
   }
@@ -23,18 +26,21 @@ const watchQuarkSrc = async () => {
 const watchPlayground = async () => {
   log.info(infoMsgs.START_WATCHING_PLAYGROUND);
   try {
-    const watchPlaygroundProcess = execa("rollup", [
-      "-wc",
-      path.resolve(__dirname, "../scripts/rollup.config.play.js"),
-    ]);
+    const watchPlaygroundProcess = execa(
+      "node",
+      [path.resolve(__dirname, "../scripts/rollup.config.play.js"), "--color"],
+      {
+        stdio: "pipe",
+      }
+    ).stdout.pipe(process.stdout);
     await watchPlaygroundProcess;
   } catch (error) {
     log.error(
-`${errMsgs.PLAYGROUND_WATCH_FAILED}
+      `${errMsgs.PLAYGROUND_WATCH_FAILED}
   throws error: ${error}`
     );
   }
-}
+};
 
 watchQuarkSrc();
 watchPlayground();

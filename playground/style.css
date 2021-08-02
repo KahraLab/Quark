@@ -1,23 +1,33 @@
 #app {
   margin-top: 20px;
-  display: flex;
 }
 
-pre, code {
-  font-family: 'Fira Code', 'Menlo';
-}
-
-pre {
-  margin: 0 20px;
-}
-pre span.title {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-code {
-  width: fit-content;
-  border-radius: 16px;
-  box-shadow: 0 5px 10px #8e8e8d;
+input {
+  outline-style: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 13px 14px;
+  width: 620px;
   font-size: 16px;
+  font-family: "Microsoft soft";
+}
+
+input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+/* Utility CSS Class for test */
+.font-italic {
+  font-style: italic;
+}
+
+.margin-10 {
+  margin: 10px;
+}
+
+.bg-gray {
+  background: #ccccccdd;
 }

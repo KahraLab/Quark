@@ -1,46 +1,62 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import serve from "rollup-plugin-serve";
-import babel from '@rollup/plugin-babel';
-import livereload from 'rollup-plugin-livereload';
+const { nodeResolve } = require("@rollup/plugin-node-resolve");
+const commonjs = require("@rollup/plugin-commonjs");
+const serve = require("rollup-plugin-serve");
+const { babel } = require("@rollup/plugin-babel");
+const livereload = require("rollup-plugin-livereload");
+const rollup = require("rollup");
+const log = require("../dev-cli/logger");
+const chalk = require("chalk");
 
-export default {
+const playConfig = {
   input: "./playground/play.jsx",
   output: {
     file: "./playground/bundle/play.bundle.js",
-    format: 'iife'
+    format: "iife",
   },
   plugins: [
-    resolve(),
+    nodeResolve(),
     commonjs({
-      include: 'node_modules/**',
+      include: "node_modules/**",
     }),
     babel({
-      exclude: 'node_modules/**',
+      exclude: "node_modules/**",
       plugins: [
         [
           "@babel/plugin-transform-react-jsx",
           {
             pragma: "Quark.createElement",
-            pragmaFrag: "Quark.Fragment"
+            pragmaFrag: "Quark.Fragment",
           },
         ],
       ],
     }),
     serve({
-      open: 'index.html',
+      open: "index.html",
       verbose: false,
       contentBase: ["dist", "playground"],
       host: "localhost",
       port: 8100,
       onListening() {
-        console.log(`Start Quark Playground - ` +
-          `Server listening at http://${this.host}:${this.port}/`);
+        log.info(
+          `Opening Quark Playground - ` +
+            `Server listening at http://${this.host}:${this.port}/`
+        );
       },
     }),
     livereload({
-      watch: 'playground'
-    })
+      watch: "playground",
+    }),
   ],
 };
 
+let rebuildCount = 0;
+const playWatcher = rollup.watch(playConfig);
+playWatcher.on("change", () => {
+  log.info(
+    `${chalk.yellow(
+      "[ HMR ]"
+    )} Rebuild library source code... (${chalk.bold.hex("#63D1af")(
+      "x" + ++rebuildCount
+    )})`
+  );
+});

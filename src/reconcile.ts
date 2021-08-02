@@ -5,12 +5,8 @@ import type {
   ElementProps,
   NullableFiber,
 } from "./typings";
-import {
-  isEvent,
-  isProperty,
-  isNew,
-  isGone,
-} from './utils'
+import { isEvent, isProperty, isNew, isGone } from "./utils";
+import { updateClass, patchStyle } from "./utils";
 
 let workInProgress: NullableFiber = null;
 let rootFiber: NullableFiber = null;
@@ -42,11 +38,20 @@ function updateDOM(
       // @ts-ignore
       container[name] = "";
     });
+
   // Set new or changed properties
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
+      const prev = prevProps[name],
+        next = nextProps[name];
+      if (name === "class" || name === "className") {
+        return updateClass(container as Element, next);
+      } else if (name === "style") {
+        return patchStyle(container as Element, prev, next);
+      }
+
       // @ts-ignore
       container[name] = nextProps[name];
     });

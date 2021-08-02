@@ -1,6 +1,6 @@
 const infoMsgs = {
   START_WATCHING_SRC: "Start watching library source code...",
-  START_WATCHING_PLAYGROUND: 'Start watching playground code...'
+  START_WATCHING_PLAYGROUND: 'Start watching playground code...',
 };
 
 const warnMsgs = {

@@ -1,11 +1,11 @@
-import path from "path";
-import typescript from "rollup-plugin-typescript2";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
+const path = require("path");
+const typescript = require("rollup-plugin-typescript2");
+const { nodeResolve } = require("@rollup/plugin-node-resolve");
+const commonjs = require("@rollup/plugin-commonjs");
 
-const buildPlugins = [typescript(), resolve(), commonjs()];
+const buildPlugins = [typescript(), nodeResolve(), commonjs()];
 
-export function createConfig(options) {
+function createConfig(options) {
   const { input, output, plugins: pluginsFromOptions } = options;
   let plugins = [...buildPlugins];
   if (pluginsFromOptions) {
@@ -18,3 +18,7 @@ export function createConfig(options) {
     plugins,
   };
 }
+
+module.exports = {
+  createConfig,
+};
