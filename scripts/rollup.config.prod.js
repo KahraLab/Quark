@@ -1,4 +1,5 @@
 import { createConfig } from './common-config';
+import { terser } from "rollup-plugin-terser";
 
 const prodConfig = createConfig({
   output: [
@@ -18,6 +19,7 @@ const prodConfig = createConfig({
       name: "Quark",
     },
   ],
+  plugins: [terser()]
 });
 
 export default prodConfig;

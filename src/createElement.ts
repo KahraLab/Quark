@@ -1,5 +1,5 @@
 import {
-  Attributes,
+  PropsType,
   FC,
   FragmentProps,
   QuarkElement,
@@ -7,7 +7,7 @@ import {
   QuarkElementTypeSymbol,
 } from "./typings";
 
-export function createElement<P extends Attributes = {}>(
+export function createElement<P extends PropsType = {}>(
   type: keyof HTMLElementTagNameMap | FC,
   props?: P,
   ...children: ElementChild[]
@@ -29,6 +29,7 @@ export function createTextElement(content: ElementChild): QuarkElement {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: String(content),
+      children: []
     },
   };
 }
