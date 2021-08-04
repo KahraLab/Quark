@@ -1,17 +1,32 @@
-import type {
+import {
   Fiber,
   QuarkElement,
   RequestIdleCallbackDeadline,
   ElementProps,
   NullableFiber,
+  FC,
+  ElementCluster,
+  ElementUnit,
 } from "./typings";
-import { isEvent, isProperty, isNew, isGone } from "./utils";
-import { updateClass, patchStyle } from "./utils";
+import {
+  updateClass,
+  patchStyle,
+  isStringifyPrimitive as isCanStringifyPrimitive,
+  isArray,
+  isBoolean,
+} from "./utils";
 
 let workInProgress: NullableFiber = null;
 let rootFiber: NullableFiber = null;
 let currentRoot: NullableFiber = null;
 let deletions: Fiber[];
+
+const isEvent = (key: string) => key.startsWith("on");
+const isProperty = (key: string) => key !== "children";
+const isNew = (prev: ElementProps, next: ElementProps) => (key: string) =>
+  prev[key] !== next[key];
+const isGone = (prev: ElementProps, next: ElementProps) => (key: string) =>
+  !Object.keys(next).includes(key);
 
 export function render(element: QuarkElement, container: Node) {
   rootFiber = {
@@ -23,6 +38,10 @@ export function render(element: QuarkElement, container: Node) {
   } as Fiber;
   deletions = [];
   workInProgress = rootFiber;
+}
+
+function createFiber(properties: Partial<Fiber>) {
+  return { ...properties } as Fiber;
 }
 
 function updateDOM(
@@ -76,19 +95,33 @@ function commitRoot() {
   rootFiber = null;
 }
 
-function commitWork(fiber?: Fiber) {
+function commitWork(fiber?: NullableFiber) {
   if (!fiber) return;
-  const domParent = fiber.returns.container;
+
+  let domParentFiber = fiber.returns;
+  while (!domParentFiber.container) {
+    domParentFiber = domParentFiber.returns;
+  }
+  const domParent = domParentFiber.container;
+
   if (fiber.effectTag === "PLACEMENT" && fiber.container) {
     domParent.appendChild(fiber.container);
   } else if (fiber.effectTag === "UPDATE" && fiber.container) {
     updateDOM(fiber.container, fiber.alternate!.props, fiber.props);
   } else if (fiber.effectTag === "DELETION") {
-    domParent.removeChild(fiber.container);
+    commitDeletion(fiber, domParent);
   }
 
   commitWork(fiber.child);
   commitWork(fiber.silbling);
+}
+
+function commitDeletion(fiber: Fiber, domParent: Node) {
+  if (fiber.container) {
+    domParent.removeChild(fiber.container);
+  } else {
+    fiber.child && commitDeletion(fiber.child, domParent);
+  }
 }
 
 function createDOM(fiber: Fiber) {
@@ -101,19 +134,19 @@ function createDOM(fiber: Fiber) {
   return dom;
 }
 
-function performWork(workInProgress: Fiber) {
-  if (!workInProgress.container) {
-    workInProgress.container = createDOM(workInProgress);
+function performUnitOfWork(fiber: Fiber) {
+  const isFunctionComponent = fiber.type instanceof Function;
+  if (isFunctionComponent) {
+    updateFunctionComponent(fiber);
+  } else {
+    updateHost(fiber);
   }
-
-  const elements: QuarkElement[] = workInProgress.props.children;
-  reconcileChildren(workInProgress, elements);
 
   // try to understand this with Parent-Children-Silblings graph
-  if (workInProgress.child) {
-    return workInProgress.child;
+  if (fiber.child) {
+    return fiber.child;
   }
-  let nextFiber = workInProgress;
+  let nextFiber = fiber;
   while (nextFiber) {
     if (nextFiber.silbling) {
       return nextFiber.silbling;
@@ -124,61 +157,98 @@ function performWork(workInProgress: Fiber) {
   return null;
 }
 
-function reconcileChildren(wip: Fiber, elements: QuarkElement[]) {
-  let index = 0;
-  let oldFiber = wip.alternate?.child || null;
-  let prevSilbling: NullableFiber = null;
+function updateFunctionComponent(fiber: Fiber) {
+  const children = (fiber.type as FC)(fiber.props);
+  reconcileChildren(fiber, children);
+}
+function updateHost(fiber: Fiber) {
+  if (!fiber.container) {
+    fiber.container = createDOM(fiber);
+  }
 
-  while (index < elements.length || !!oldFiber) {
-    const element = elements[index];
-    let newFiber: NullableFiber = null;
+  const children: ElementCluster = fiber.props.children;
+  reconcileChildren(fiber, children);
+}
 
-    const isSameType = element && oldFiber && element.type === oldFiber.type;
+function patchNewFiber(
+  returns: Fiber,
+  element: ElementUnit,
+  oldFiber?: NullableFiber,
+): NullableFiber {
+  let newFiber: NullableFiber = null;
 
-    if (isSameType) {
-      newFiber = {
-        type: oldFiber!.type,
-        props: element.props,
-        container: oldFiber!.container,
-        returns: wip,
-        alternate: oldFiber!,
-        effectTag: "UPDATE",
-      };
-    }
-    if (element && !isSameType) {
-      newFiber = {
-        type: element.type,
-        props: element.props,
-        // @ts-ignore
-        container: null,
-        returns: wip,
-        // @ts-ignore
-        alternate: null,
+  let isSameType =
+    element &&
+    typeof element === "object" &&
+    oldFiber &&
+    element.type === oldFiber.type;
+  if (isSameType) {
+    newFiber = createFiber({
+      type: oldFiber!.type,
+      props: (element as QuarkElement).props,
+      container: oldFiber!.container,
+      returns,
+      alternate: oldFiber,
+      effectTag: "UPDATE",
+    });
+  } else {
+    if (element && !isBoolean(element)) {
+      const isCanStringifyPrimitiveElement = isCanStringifyPrimitive(element);
+      newFiber = createFiber({
+        type: isCanStringifyPrimitiveElement
+          ? "TEXT_ELEMENT"
+          : (element as QuarkElement).type,
+        props: isCanStringifyPrimitiveElement
+          ? { nodeValue: String(element) }
+          : (element as QuarkElement).props,
+        returns,
         effectTag: "PLACEMENT",
-      };
+      });
     }
-    if (oldFiber && !isSameType) {
-      (oldFiber.effectTag = "DELETION"), deletions.push(oldFiber);
-    }
-
     if (oldFiber) {
+      oldFiber.effectTag = "DELETION";
+      deletions.push(oldFiber);
       oldFiber = oldFiber.silbling || null;
     }
+  }
 
-    if (index === 0) {
-      wip.child = newFiber!; // links to the first child
-    } else {
-      prevSilbling!.silbling = newFiber!;
+  return newFiber;
+}
+
+function reconcileChildren(fiber: Fiber, children: ElementCluster) {
+  if (!children) return;
+
+  let oldFiber = fiber.alternate?.child;
+  let newFiber: NullableFiber;
+  if (isArray(children)) {
+    let index = 0;
+    let prevSilbling: NullableFiber = null;
+
+    while (index < children.length || oldFiber != null) {
+      const child = children[index];
+      newFiber = patchNewFiber(fiber, child, oldFiber);
+
+      if (index === 0) {
+        fiber.child = newFiber; // links to the first child
+      } else {
+        // from second loop
+        if (prevSilbling) {
+          prevSilbling.silbling = newFiber;
+        }
+      }
+      prevSilbling = newFiber;
+      index++;
     }
-    prevSilbling = newFiber;
-    index++;
+  } else {
+    newFiber = patchNewFiber(fiber, children, oldFiber);
+    fiber.child = newFiber;
   }
 }
 
 function workLoop(deadline: RequestIdleCallbackDeadline) {
   let shouldYield = false;
   while (workInProgress && !shouldYield) {
-    workInProgress = performWork(workInProgress);
+    workInProgress = performUnitOfWork(workInProgress);
     shouldYield = deadline.timeRemaining() < 1;
   }
 

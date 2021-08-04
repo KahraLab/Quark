@@ -1,9 +1,12 @@
 export * from "./class";
 export * from "./styie";
 
-import type { ElementProps } from "../typings";
-
 export const isArray = Array.isArray;
+export const isNumber = (val: unknown): val is number =>
+  typeof val === "number" || typeof val === "bigint";
+export const isNull = (val: unknown): val is null => val === null;
+export const isUndefined = (val: unknown): val is undefined =>
+  typeof val === "undefined";
 export const isFunction = (val: unknown): val is Function =>
   typeof val === "function";
 export const isString = (val: unknown): val is string =>
@@ -12,15 +15,10 @@ export const isSymbol = (val: unknown): val is symbol =>
   typeof val === "symbol";
 export const isObject = (val: unknown): val is Record<any, any> =>
   val !== null && typeof val === "object";
-
-export const isEvent = (key: string) => key.startsWith("on");
-export const isProperty = (key: string) => key !== "children";
-export const isNew =
-  (prev: ElementProps, next: ElementProps) => (key: string) =>
-    prev[key] !== next[key];
-export const isGone =
-  (prev: ElementProps, next: ElementProps) => (key: string) =>
-    !Object.keys(next).includes(key);
+export const isStringifyPrimitive = (val: unknown): boolean =>
+  isNumber(val) || isString(val);
+export const isBoolean = (val: unknown): val is boolean =>
+  typeof val === "boolean";
 
 const cacheStringFunction = <T extends (str: string) => string>(fn: T): T => {
   const cache: Record<string, string> = Object.create(null);

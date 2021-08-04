@@ -1,5 +1,4 @@
-import { isObject } from "lodash";
-import { isArray, isString } from "../utils";
+import { isArray, isString, isObject } from "../utils";
 
 export function updateClass(el: Element, value: string | string[] | Record<string, boolean> | null) {
   if (value == null) {

@@ -8,11 +8,11 @@ export type Ref<T = unknown> = RefObject<T> | RefCallback<T> | null;
 export interface ElementProps {
   key?: Key;
   ref?: Ref;
-  children?: ElementChild[];
+  children?: ElementCluster;
   [key: string]: any;
 }
 export interface FragmentProps {
-  children: ElementChild[];
+  children: ElementCluster;
 }
 export const QuarkElementTypeSymbol = Symbol.for('QuarkElement');
 export interface QuarkElement<P extends ElementProps = any> {
@@ -20,17 +20,17 @@ export interface QuarkElement<P extends ElementProps = any> {
   type: string | FC;
   props: P;
 }
-export type ElementChild =
+export type ElementUnit =
   | string
   | number
   | boolean
   | null
   | undefined
-  | QuarkElement
-  | ElementChild[];
+  | QuarkElement;
+export type ElementCluster = ElementUnit | ElementUnit[];
 
 // FunctionComponent
 export interface FC<P extends ElementProps = any> {
-  (props: P): QuarkElement<P> | null;
+  (props: P): ElementCluster;
   // more properties...
 }

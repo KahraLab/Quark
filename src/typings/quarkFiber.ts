@@ -1,4 +1,4 @@
-import { ElementProps, FC, Ref } from "./quarkElement";
+import { ElementProps, FC, QuarkElement, Ref } from "./quarkElement";
 
 export type NullableFiber = Fiber | null;
 export interface Fiber<P extends ElementProps = any> {
@@ -7,9 +7,9 @@ export interface Fiber<P extends ElementProps = any> {
   key?: string;
   ref?: Ref;
   container: Node;
-  silbling?: Fiber;
+  silbling?: NullableFiber;
   returns: Fiber;
-  child?: Fiber;
-  alternate?: Fiber;
+  child?: NullableFiber;
+  alternate?: NullableFiber;
   effectTag: string;
 }

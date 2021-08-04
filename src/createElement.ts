@@ -3,14 +3,14 @@ import {
   FC,
   FragmentProps,
   QuarkElement,
-  ElementChild,
+  ElementUnit,
   QuarkElementTypeSymbol,
 } from "./typings";
 
 export function createElement<P extends ElementProps = {}>(
   type: keyof HTMLElementTagNameMap | FC,
   props?: P,
-  ...children: ElementChild[]
+  ...children: ElementUnit[]
 ): QuarkElement {
   return {
     $$typeof: QuarkElementTypeSymbol,
@@ -23,7 +23,7 @@ export function createElement<P extends ElementProps = {}>(
     },
   };
 }
-export function createTextElement(content: ElementChild): QuarkElement {
+export function createTextElement(content: ElementUnit): QuarkElement {
   return {
     $$typeof: QuarkElementTypeSymbol,
     type: "TEXT_ELEMENT",
