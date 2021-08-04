@@ -23,6 +23,9 @@ input:focus {
 .font-italic {
   font-style: italic;
 }
+.font-bold {
+  font-weight: bold;
+}
 
 .margin-10 {
   margin: 10px;

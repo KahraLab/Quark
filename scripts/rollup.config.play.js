@@ -55,7 +55,7 @@ playWatcher.on("change", () => {
   log.info(
     `${chalk.yellow(
       "[ HMR ]"
-    )} Rebuild library source code... (${chalk.bold.hex("#63D1af")(
+    )} Rebuild playground source code... (${chalk.bold.hex("#63D1af")(
       "x" + ++rebuildCount
     )})`
   );
