@@ -19,6 +19,69 @@ input:focus {
     0 0 8px rgba(102, 175, 233, 0.6);
 }
 
+button:hover {
+  cursor: pointer;
+}
+button {
+  font-weight: bold;
+  position: relative;
+  background: orangered;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 15px 24px;
+  font-size: 1.4rem;
+  /* hsl(hue, saturation, lightness) */
+  box-shadow: -6px 6px 0 hsl(16, 100%, 30%);
+}
+button:hover {
+  background: hsl(16, 100%, 45%);
+}
+button:active {
+  background: hsl(16, 100%, 40%);
+  top: 3px;
+  left: -3px;
+  box-shadow: -3px 3px 0 hsl(16, 100%, 30%);
+}
+button::before {
+  position: absolute;
+  display: block;
+  content: "";
+  height: 0;
+  width: 0;
+
+  border: 6px solid transparent;
+  border-right: 6px solid hsl(16, 100%, 30%);
+  border-left-width: 0px;
+  top: 0;
+  left: -6px;
+}
+button::after {
+  position: absolute;
+  display: block;
+  content: "";
+  height: 0;
+  width: 0;
+
+  border: 6px solid transparent;
+  border-top: 6px solid hsl(16, 100%, 30%);
+  border-bottom-width: 0px;
+  bottom: -6px;
+  right: 0;
+}
+button:active::before {
+  border: 3px solid transparent;
+  border-right: 3px solid hsl(16, 100%, 30%);
+  border-left-width: 0px;
+  left: -3px;
+}
+button:active::after {
+  border: 3px solid transparent;
+  border-top: 3px solid hsl(16, 100%, 30%);
+  border-bottom-width: 0px;
+  bottom: -3px;
+}
+
 /* Utility CSS Class for test */
 .font-italic {
   font-style: italic;

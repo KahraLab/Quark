@@ -3,7 +3,7 @@ import {
   getCurrentRoot,
   setNextUnitOfWork,
   getWorkInProgressFiber,
-  getWorkInProgressRoot,
+  setWorkInProgressRoot,
 } from "./reconcile";
 import {
   Dispatch,
@@ -40,14 +40,13 @@ export function useReducer<S, A>(
   });
 
   const dispatch = (action: SetStateAction<S>) => {
-    let wipRoot = getWorkInProgressRoot(),
-      currentRoot = getCurrentRoot();
+    let currentRoot = getCurrentRoot();
     newHook.actions.push(action);
-    wipRoot = {
+    let wipRoot = setWorkInProgressRoot({
       container: currentRoot?.container || null,
       props: currentRoot?.props || {},
       alternate: currentRoot,
-    } as Fiber;
+    } as Fiber);
     setNextUnitOfWork(wipRoot);
     clearDeletions();
   };

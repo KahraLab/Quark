@@ -23,12 +23,10 @@ let currentRoot: NullableFiber = null;
 let wipFiber: NullableFiber = null;
 let deletions: Fiber[];
 
-export const getWorkInProgressRoot = () => wipRoot;
+export const setWorkInProgressRoot = (fiber: Fiber) => (wipRoot = fiber);
 export const getWorkInProgressFiber = () => wipFiber;
 export const getCurrentRoot = () => currentRoot;
-export const setNextUnitOfWork = (fiber: NullableFiber) => {
-  nextUnitOfWork = fiber;
-};
+export const setNextUnitOfWork = (fiber: NullableFiber) => (nextUnitOfWork = fiber);
 export const clearDeletions = () => {
   deletions = [];
 };
@@ -152,8 +150,10 @@ function patchNewFiber(
     if (oldFiber) {
       oldFiber.effectTag = "DELETION";
       deletions.push(oldFiber);
-      oldFiber = oldFiber.silbling || null;
     }
+  }
+  if (oldFiber) {
+    oldFiber = oldFiber.silbling || null;
   }
 
   return [newFiber, oldFiber];
@@ -195,7 +195,6 @@ function workLoop(deadline: RequestIdleCallbackDeadline) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
   }
-
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
   }
