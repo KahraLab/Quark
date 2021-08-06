@@ -4,7 +4,7 @@ const serve = require("rollup-plugin-serve");
 const { babel } = require("@rollup/plugin-babel");
 const livereload = require("rollup-plugin-livereload");
 const rollup = require("rollup");
-const log = require("../dev-cli/logger");
+const Log = require("../dev-cli/logger");
 const chalk = require("chalk");
 
 const playConfig = {
@@ -34,14 +34,8 @@ const playConfig = {
       open: "index.html",
       verbose: false,
       contentBase: ["dist", "playground"],
-      host: "localhost",
-      port: 8100,
-      onListening() {
-        log.info(
-          `Opening Quark Playground - ` +
-            `Server listening at http://${this.host}:${this.port}/`
-        );
-      },
+      host: process.env.HOST || 'localhost',
+      port: process.env.PORT || 8100
     }),
     livereload({
       watch: "playground",
@@ -50,6 +44,7 @@ const playConfig = {
 };
 
 let rebuildCount = 0;
+let log = new Log().singleLineMode();
 const playWatcher = rollup.watch(playConfig);
 playWatcher.on("change", () => {
   log.info(
@@ -58,5 +53,5 @@ playWatcher.on("change", () => {
     )} Rebuild playground source code... (${chalk.bold.hex("#63D1af")(
       "x" + ++rebuildCount
     )})`
-  );
+  ).clear();
 });

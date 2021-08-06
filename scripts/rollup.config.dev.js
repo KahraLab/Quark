@@ -1,7 +1,7 @@
 const { createConfig } = require("./common-config");
 const sourcemaps = require("rollup-plugin-sourcemaps");
 const rollup = require("rollup");
-const log = require("../dev-cli/logger");
+const Log = require("../dev-cli/logger");
 const chalk = require("chalk");
 
 const devConfig = createConfig({
@@ -29,6 +29,7 @@ const devConfig = createConfig({
 });
 
 let rebuildCount = 0;
+let log = new Log().singleLineMode();
 const devWatcher = rollup.watch(devConfig);
 devWatcher.on("change", () => {
   log.info(
@@ -37,5 +38,5 @@ devWatcher.on("change", () => {
     )} Rebuild library source code... (${chalk.bold.hex("#63D1af")(
       "x" + ++rebuildCount
     )})`
-  );
+  ).clear();
 });

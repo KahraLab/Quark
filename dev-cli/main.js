@@ -1,7 +1,8 @@
 const execa = require("execa");
 const path = require("path");
 
-const log = require("./logger");
+const Log = require("./logger");
+const log = new Log();
 const { infoMsgs, warnMsgs, errMsgs } = require("./messages");
 
 const watchQuarkSrc = async () => {
@@ -25,6 +26,12 @@ const watchQuarkSrc = async () => {
 
 const watchPlayground = async () => {
   log.info(infoMsgs.START_WATCHING_PLAYGROUND);
+  log.info(
+    `Opening Quark Playground - ` +
+      `Server listening at http://${
+        process.env.HOST || 'localhost'
+      }:${process.env.PORT || 8100}/`
+  );
   try {
     const watchPlaygroundProcess = execa(
       "node",

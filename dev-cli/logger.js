@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+const slogStdout = require("single-line-log").stdout;
 
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
@@ -9,27 +10,58 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   minute: "2-digit",
   second: "2-digit",
 });
-const recordTime = () => chalk.cyan(`[ ${dateFormatter.format(Date.now())} ]`);
-/** 
- * @param {string} msg
- * @param {string} level
- */
-const _log = (msg, level) => {
-  console.log(`${recordTime()} - ${level} - ${msg}`);
-};
-const errorColorChalk = chalk.hex('#f76565');
-const log = {
-  /** @param {string} msg */
-  info: (msg) => _log(msg, logLevel.INFO),
-  /** @param {string} msg */
-  warn: (msg) => _log(chalk.yellow(msg), logLevel.WARN),
-  /** @param {string} msg */
-  error: (msg) => _log(errorColorChalk(msg), logLevel.ERROR)
-}
-const logLevel = {
-  INFO: chalk.blue('INFO'),
-  WARN: chalk.yellow('WARN'),
-  ERROR: errorColorChalk('ERROR')
-};
+const errorColorChalk = chalk.hex("#f76565");
 
-module.exports = log
+const recordTime = () => chalk.cyan(`[ ${dateFormatter.format(Date.now())} ]`);
+/** 传入日志打印方法，创建 logger
+ * @param {() => void} logger
+ */
+const createLogger = (logger) => (msg, level) => {
+  logger(`${recordTime()} - ${level} - ${msg}\r`);
+};
+const _log = createLogger(console.log);
+const slog = createLogger(slogStdout);
+
+const logLevel = {
+  INFO: chalk.blue("INFO"),
+  WARN: chalk.yellow("WARN"),
+  ERROR: errorColorChalk("ERROR"),
+};
+module.exports = class Log {
+  isSingleLineMode = false;
+  constructor(logger) {
+    this.logger = logger || _log;
+  }
+
+  singleLineMode() {
+    this.logger = slog;
+    this.singleLineMode = true;
+    return this;
+  }
+  reset() {
+    this.logger = _log;
+    this.singleLineMode = false;
+    return this;
+  }
+  /** @param {string} msg */
+  info(msg) {
+    this.logger(msg, logLevel.INFO);
+    return this;
+  }
+  /** @param {string} msg */
+  warn(msg) {
+    this.logger(chalk.yellow(msg), logLevel.WARN);
+    return this;
+  }
+  /** @param {string} msg */
+  error(msg) {
+    this.logger(errorColorChalk(msg), logLevel.ERROR);
+    return this;
+  }
+  clear() {
+    if (this.isSingleLineMode) {
+      this.logger.clear();
+    }
+    return this;
+  }
+}

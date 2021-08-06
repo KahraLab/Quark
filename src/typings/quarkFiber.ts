@@ -1,3 +1,4 @@
+import { Hooks } from "./hooks";
 import { ElementProps, FC, QuarkElement, Ref } from "./quarkElement";
 
 export type NullableFiber = Fiber | null;
@@ -12,4 +13,5 @@ export interface Fiber<P extends ElementProps = any> {
   child?: NullableFiber;
   alternate?: NullableFiber;
   effectTag: string;
+  hooks: Hooks
 }
