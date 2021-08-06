@@ -6,14 +6,15 @@ const App = (props) => {
   const [value, setValue] = useState('');
 
   return (
-    <div className={{
+    <div id="quark-test" className={{
       'bg-gray': value === 'gray'
     }} style={{ padding: '16px' }}>
       <input type="text" value={value} onInput={(e) => {
         setValue(e.target.value);
       }}/>
       <h3>Hello, {props.name}, 输入的内容：</h3>
-      <p className={['font-italic', 'margin-10']}>{value}</p>
+      <p className={['font-italic', 'margin-10']}>[ {value || '...'} ]</p>
+
       <p>Count: <span className="font-bold">{count}</span></p>
       <button onClick={() => {
         setCount(count + 1);

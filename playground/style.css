@@ -1,5 +1,10 @@
-#app {
-  margin-top: 20px;
+#quark-test {
+  margin: 20px auto;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 input {
