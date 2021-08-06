@@ -11,17 +11,29 @@ function countReducer(action, state) {
   }
 }
 
+const initItems = ["list-item 1", "list-item 2", "list-item 3"];
+function itemsReducer(action, state) {
+  switch (action.type) {
+    case "push":
+      state.push(action.value);
+      return state;
+    default:
+      throw new Error();
+  }
+}
+
 const container = document.getElementById("app");
 const App = (props) => {
   const [value, setValue] = useState("");
-  const [state, dispatch] = useReducer(countReducer, {
+  const [state, dispatchState] = useReducer(countReducer, {
     count: 0,
   });
+  const [items, dispatchItems] = useReducer(itemsReducer, initItems);
 
   return (
     <div
       id="quark-test"
-      className={{
+      className={{ // 测试 classnames-map
         "bg-gray": value === "gray",
       }}
       style={{ padding: "16px" }}
@@ -33,8 +45,8 @@ const App = (props) => {
           setValue(e.target.value);
         }}
       />
-      <h3>Hello, {props.name}, 输入的内容：</h3>
-      <p className={["font-italic", "margin-10"]}>[ {value || "..."} ]</p>
+      <h3>Hello, 下面同步显示 input 内输入的内容：</h3>
+      <p className={["font-italic", "margin-10"]}>"{value || `... 快来呀，${props.name}`}"</p>
 
       <p>
         Count: <span className="font-bold">{state.count}</span>
@@ -43,7 +55,7 @@ const App = (props) => {
         <button
           className="margin-10"
           onClick={() => {
-            dispatch({ type: "increment" });
+            dispatchState({ type: "increment" });
           }}
         >
           +1
@@ -51,12 +63,30 @@ const App = (props) => {
         <button
           className="margin-10"
           onClick={() => {
-            dispatch({ type: "decrement" });
+            dispatchState({ type: "decrement" });
           }}
         >
           -1
         </button>
       </div>
+      <button
+        className="margin-10"
+        onClick={() => {
+          dispatchItems({ type: "push", value: `list-item ${items.length+1}` });
+        }}
+      >
+        Add list item
+      </button>
+
+      <ul>
+        {items.map((val, i) => {
+          return (
+            <li key={`${i}-${val}`}>
+              No.{i}: {val}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };

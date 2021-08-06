@@ -108,7 +108,7 @@ function updateHost(fiber: Fiber) {
     fiber.container = createDOM(fiber);
   }
 
-  const children: ElementCluster = fiber.props.children;
+  const children: ElementCluster = fiber.props?.children;
   reconcileChildren(fiber, children);
 }
 
@@ -204,8 +204,8 @@ function workLoop(deadline: RequestIdleCallbackDeadline) {
 
 function updateDOM(
   container: Node,
-  prevProps: ElementProps,
-  nextProps: ElementProps
+  prevProps: ElementProps = {},
+  nextProps: ElementProps = {}
 ) {
   // Remove old properties
   Object.keys(prevProps)

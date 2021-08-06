@@ -1,3 +1,4 @@
+import { flatten } from "lodash-es";
 import {
   ElementProps,
   FC,
@@ -17,7 +18,7 @@ export function createElement<P extends ElementProps = {}>(
     type,
     props: {
       ...props,
-      children: children.map((child) =>
+      children: flatten(children).map((child) =>
         typeof child === "object" ? child : createTextElement(child)
       ),
     },
