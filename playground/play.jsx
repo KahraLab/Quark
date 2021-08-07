@@ -1,5 +1,30 @@
 const { useState, useReducer, render } = Quark;
 
+function InputTest(props) {
+  const [value, setValue] = useState("");
+  return (
+    <>
+      <input
+        type="text"
+        value={value}
+        onInput={(e) => {
+          setValue(e.target.value);
+        }}
+      />
+      <h3>Hello, 下面同步显示 input 内输入的内容：</h3>
+      <p
+        className={[
+          "font-italic",
+          "margin-10",
+          value.includes("gray") && "bg-gray",
+        ]}
+      >
+        "{value || `... 快来呀，${props.name || "David"}`}"
+      </p>
+    </>
+  );
+}
+
 function countReducer(action, state) {
   switch (action.type) {
     case "increment":
@@ -10,44 +35,12 @@ function countReducer(action, state) {
       throw new Error();
   }
 }
-
-const initItems = ["list-item 1", "list-item 2", "list-item 3"];
-function itemsReducer(action, state) {
-  switch (action.type) {
-    case "push":
-      state.push(action.value);
-      return state;
-    default:
-      throw new Error();
-  }
-}
-
-const container = document.getElementById("app");
-const App = (props) => {
-  const [value, setValue] = useState("");
+function CountTest(props) {
   const [state, dispatchState] = useReducer(countReducer, {
     count: 0,
   });
-  const [items, dispatchItems] = useReducer(itemsReducer, initItems);
-
   return (
-    <div
-      id="quark-test"
-      className={{ // 测试 classnames-map
-        "bg-gray": value === "gray",
-      }}
-      style={{ padding: "16px" }}
-    >
-      <input
-        type="text"
-        value={value}
-        onInput={(e) => {
-          setValue(e.target.value);
-        }}
-      />
-      <h3>Hello, 下面同步显示 input 内输入的内容：</h3>
-      <p className={["font-italic", "margin-10"]}>"{value || `... 快来呀，${props.name}`}"</p>
-
+    <>
       <p>
         Count: <span className="font-bold">{state.count}</span>
       </p>
@@ -69,15 +62,35 @@ const App = (props) => {
           -1
         </button>
       </div>
+    </>
+  );
+}
+
+const initItems = new Array(10);
+for (let i = 0; i < initItems.length; i++) {
+  initItems[i] = `item-${i + 1}`;
+}
+function itemsReducer(action, state) {
+  switch (action.type) {
+    case "push":
+      state.push(action.value);
+      return state;
+    default:
+      throw new Error();
+  }
+}
+function ListTest(props) {
+  const [items, dispatchItems] = useReducer(itemsReducer, initItems);
+  return (
+    <>
       <button
         className="margin-10"
         onClick={() => {
-          dispatchItems({ type: "push", value: `list-item ${items.length+1}` });
+          dispatchItems({ type: "push", value: `item-${items.length + 1}` });
         }}
       >
         Add list item
       </button>
-
       <ul>
         {items.map((val, i) => {
           return (
@@ -87,8 +100,19 @@ const App = (props) => {
           );
         })}
       </ul>
+    </>
+  );
+}
+
+const container = document.getElementById("app");
+function App(props) {
+  return (
+    <div id="quark-test" style={{ padding: "16px" }}>
+      <InputTest />
+      <CountTest />
+      <ListTest />
     </div>
   );
-};
+}
 
 render(<App name="David" />, container);

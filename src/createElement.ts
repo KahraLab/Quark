@@ -1,4 +1,4 @@
-import { flatten } from "lodash-es";
+import { flattenDeep } from "lodash-es";
 import {
   ElementProps,
   FC,
@@ -7,6 +7,7 @@ import {
   ElementUnit,
   QuarkElementTypeSymbol,
 } from "./typings";
+import { isArray } from "./utils";
 
 export function createElement<P extends ElementProps = {}>(
   type: keyof HTMLElementTagNameMap | FC,
@@ -18,7 +19,7 @@ export function createElement<P extends ElementProps = {}>(
     type,
     props: {
       ...props,
-      children: flatten(children).map((child) =>
+      children: flattenDeep(children).map((child) =>
         typeof child === "object" ? child : createTextElement(child)
       ),
     },
@@ -30,10 +31,10 @@ export function createTextElement(content: ElementUnit): QuarkElement {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: String(content),
-      children: []
+      children: [],
     },
   };
 }
 export function Fragment(props: FragmentProps) {
-  return props.children;
+  return isArray(props.children) ? flattenDeep(props.children) : props.children;
 }

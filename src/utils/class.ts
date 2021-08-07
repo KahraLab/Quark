@@ -9,7 +9,7 @@ export function updateClass(
   } else if (isString(value)) {
     el.className = value;
   } else if (isArray(value)) {
-    el.className = value.join(" ");
+    el.className = value.filter((cls) => Boolean(cls)).join(" ");
   } else if (isObject(value)) {
     el.className = Object.entries(value)
       .map(([className, bool]) => {

@@ -23,10 +23,13 @@ let currentRoot: NullableFiber = null;
 let wipFiber: NullableFiber = null;
 let deletions: Fiber[];
 
+let commitStack: (NullableFiber|undefined)[] = [];
+
 export const setWorkInProgressRoot = (fiber: Fiber) => (wipRoot = fiber);
 export const getWorkInProgressFiber = () => wipFiber;
 export const getCurrentRoot = () => currentRoot;
-export const setNextUnitOfWork = (fiber: NullableFiber) => (nextUnitOfWork = fiber);
+export const setNextUnitOfWork = (fiber: NullableFiber) =>
+  (nextUnitOfWork = fiber);
 export const clearDeletions = () => {
   deletions = [];
 };
@@ -253,25 +256,37 @@ function commitRoot() {
   wipRoot = null;
 }
 
-function commitWork(fiber?: NullableFiber) {
-  if (!fiber) return;
+function commitWork(workFiber?: NullableFiber) {
+  if (!workFiber) return;
 
-  let domParentFiber = fiber.returns;
-  while (!domParentFiber.container) {
-    domParentFiber = domParentFiber.returns;
+  // using the iterate style to avoid stack overflow
+  commitStack.push(workFiber);
+  while (commitStack.length) {
+    const fiber = commitStack.pop();
+
+    if (fiber) {
+      let domParentFiber = fiber.returns;
+      while (!domParentFiber.container) {
+        domParentFiber = domParentFiber.returns;
+      }
+      const domParent = domParentFiber.container;
+
+      if (fiber.effectTag === "PLACEMENT" && fiber.container) {
+        domParent.appendChild(fiber.container);
+      } else if (workFiber.effectTag === "UPDATE" && fiber.container) {
+        updateDOM(
+          fiber.container,
+          fiber.alternate!.props,
+          fiber.props
+        );
+      } else if (fiber.effectTag === "DELETION") {
+        commitDeletion(fiber, domParent);
+      }
+
+      commitStack.push(fiber.silbling || null);
+      commitStack.push(fiber.child || null);
+    }
   }
-  const domParent = domParentFiber.container;
-
-  if (fiber.effectTag === "PLACEMENT" && fiber.container) {
-    domParent.appendChild(fiber.container);
-  } else if (fiber.effectTag === "UPDATE" && fiber.container) {
-    updateDOM(fiber.container, fiber.alternate!.props, fiber.props);
-  } else if (fiber.effectTag === "DELETION") {
-    commitDeletion(fiber, domParent);
-  }
-
-  commitWork(fiber.child);
-  commitWork(fiber.silbling);
 }
 
 function commitDeletion(fiber: Fiber, domParent: Node) {
