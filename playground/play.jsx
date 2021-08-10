@@ -91,7 +91,12 @@ function ListTest(props) {
       >
         Add list item
       </button>
-      <ul>
+      <ul
+        className={[
+          { "bg-yellow": items.length > 12 },
+          ["fs-18", "padding-10"],
+        ]}
+      >
         {items.map((val, i) => {
           return (
             <li key={`${i}-${val}`}>

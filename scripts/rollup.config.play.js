@@ -39,6 +39,7 @@ const playConfig = {
     }),
     livereload({
       watch: "playground",
+      verbose: false,
     }),
   ],
 };
